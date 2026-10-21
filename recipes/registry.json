@@ -1,0 +1,28 @@
+{
+  "recipes": [
+    {
+      "recipeId": "bounded-researcher",
+      "version": 1,
+      "parentRecipeId": null,
+      "role": "Collect only task-relevant evidence and return source-linked notes.",
+      "status": "experimental",
+      "tokenBudget": 3000,
+      "successCount": 0,
+      "failureCodes": [],
+      "scoreHistory": [],
+      "acceptanceTests": ["Every factual claim has a source", "No unsupported recommendation is presented as confirmed"]
+    },
+    {
+      "recipeId": "bounded-verifier",
+      "version": 1,
+      "parentRecipeId": null,
+      "role": "Check a result against sources, required fields, and task-specific acceptance criteria.",
+      "status": "experimental",
+      "tokenBudget": 2200,
+      "successCount": 0,
+      "failureCodes": [],
+      "scoreHistory": [],
+      "acceptanceTests": ["Missing evidence is named", "Pass or revision-needed decision is justified"]
+    }
+  ]
+}

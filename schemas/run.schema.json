@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run.schema.json",
+  "title": "Task Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["runId", "taskId", "status", "startedAt"],
+  "properties": {
+    "runId": { "type": "string", "minLength": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "recipeId": { "type": ["string", "null"] },
+    "status": { "enum": ["started", "completed", "failed", "blocked", "cancelled"] },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "finishedAt": { "type": ["string", "null"] },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "failureCode": { "type": ["string", "null"] },
+    "notes": { "type": "string" }
+  }
+}

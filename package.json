@@ -1,0 +1,10 @@
+{
+  "name": "jacob-ai-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node src/cli.js validate",
+    "test": "node --test"
+  }
+}

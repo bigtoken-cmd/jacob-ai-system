@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evaluation.schema.json",
+  "title": "Result Evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resultId", "decision", "checks", "failureCodes", "evaluatedAt"],
+  "properties": {
+    "resultId": { "type": "string" },
+    "decision": { "enum": ["pass", "revision-needed", "blocked"] },
+    "checks": { "type": "array", "items": { "type": "object", "required": ["name", "passed"], "properties": { "name": { "type": "string" }, "passed": { "type": "boolean" }, "details": { "type": "string" } } } },
+    "failureCodes": { "type": "array", "items": { "enum": ["missing-source", "missing-field", "unsupported-claim", "stale-source", "duplicate", "tool-failure", "unclear-criteria", "other"] } },
+    "evaluatedAt": { "type": "string", "format": "date-time" }
+  }
+}

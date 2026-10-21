@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-state.schema.json",
+  "title": "Project State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "currentPhase", "verifiedComplete", "notVerified", "blockers", "nextAction", "updatedAt"],
+  "properties": {
+    "projectId": { "type": "string", "minLength": 1 },
+    "currentPhase": { "type": "string", "minLength": 1 },
+    "verifiedComplete": { "type": "array", "items": { "type": "string" } },
+    "notVerified": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "nextAction": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

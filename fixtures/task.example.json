@@ -1,0 +1,15 @@
+{
+  "id": "FOUNDATION-001",
+  "domain": "system",
+  "title": "Verify the system foundation",
+  "goal": "Confirm that the task and result contracts can be validated without a model.",
+  "status": "queued",
+  "inputs": ["schemas/task.schema.json", "schemas/result.schema.json"],
+  "constraints": ["Do not call an external model", "Do not modify the live Obsidian vault"],
+  "sourceIds": ["SRC-001"],
+  "acceptanceCriteria": ["Task shape validates", "Result shape validates", "Required source is recorded"],
+  "approvalRequired": true,
+  "parentTaskId": null,
+  "createdAt": "2026-10-20T00:00:00.000Z",
+  "updatedAt": "2026-10-20T00:00:00.000Z"
+}

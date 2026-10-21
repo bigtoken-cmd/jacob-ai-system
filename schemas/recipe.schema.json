@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recipe.schema.json",
+  "title": "Agent Recipe",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recipeId", "version", "role", "status", "tokenBudget", "successCount", "failureCodes"],
+  "properties": {
+    "recipeId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "parentRecipeId": { "type": ["string", "null"] },
+    "role": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["experimental", "active", "quarantined", "retired"] },
+    "tokenBudget": { "type": "integer", "minimum": 1 },
+    "successCount": { "type": "integer", "minimum": 0 },
+    "failureCodes": { "type": "array", "items": { "type": "string" } },
+    "scoreHistory": { "type": "array", "items": { "type": "number", "minimum": 0, "maximum": 1 } },
+    "acceptanceTests": { "type": "array", "items": { "type": "string" } }
+  }
+}

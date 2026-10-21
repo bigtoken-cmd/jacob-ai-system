@@ -1,0 +1,17 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+setup = "node --version"
+run_mode = "nonconcurrent"
+
+[scripts.run.validate]
+command = "node src/cli.js validate"
+default = true
+icon = "check"
+
+[scripts.run.tests]
+command = "node --test"
+icon = "test"
+
+[scripts.archive]
+command = "node src/cli.js validate"

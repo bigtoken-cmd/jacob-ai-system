@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source.schema.json",
+  "title": "Source Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "location", "observedAt", "reliability"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^SRC-[0-9]+$" },
+    "kind": { "enum": ["chat", "file", "webpage", "assignment", "conversation", "memory", "decision", "other"] },
+    "location": { "type": "string", "minLength": 1 },
+    "title": { "type": "string" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "reliability": { "enum": ["primary", "secondary", "inferred", "unknown"] },
+    "supports": { "type": "array", "items": { "type": "string" } },
+    "freshness": { "enum": ["current", "dated", "stale", "unknown"] },
+    "notes": { "type": "string" }
+  }
+}
