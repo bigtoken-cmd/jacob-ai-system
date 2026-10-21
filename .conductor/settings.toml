@@ -21,5 +21,13 @@ icon = "list"
 command = "node src/cli.js dry-run fixtures/task.example.json"
 icon = "play"
 
+[scripts.run.index_vault]
+command = "node src/cli.js index"
+icon = "database"
+
+[scripts.run.doctor]
+command = "node src/cli.js doctor"
+icon = "stethoscope"
+
 [scripts.archive]
 command = "node src/cli.js validate"

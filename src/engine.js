@@ -86,7 +86,7 @@ export function validateResult(result) {
 
 const SKIP_DIRECTORIES = new Set(['.obsidian', '.git', 'node_modules', 'dist', 'build', 'coverage', '.next', '.cache', 'vendor']);
 
-function markdownFiles(root) {
+export function listMarkdownFiles(root) {
   const found = [];
   if (!fs.existsSync(root)) return found;
   const walk = (dir) => {
@@ -105,7 +105,7 @@ export function retrieveMarkdown(root, query, limit = 8, maxCharacters = 12000) 
   const terms = String(query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
   if (terms.length === 0) return [];
   const results = [];
-  for (const file of markdownFiles(root)) {
+  for (const file of listMarkdownFiles(root)) {
     const content = fs.readFileSync(file, 'utf8');
     const haystack = `${path.basename(file)}\n${content}`.toLowerCase();
     const matchedTerms = terms.filter(term => haystack.includes(term));

@@ -167,6 +167,36 @@ test('transaction planning refuses stale writes and applies one recoverable oper
   fs.rmSync(root, { recursive: true, force: true });
 });
 
+test('local vault config resolves an ignored path and index records only eligible Markdown', async () => {
+  const { loadLocalEnv, resolveVaultRoot } = await import('../src/config.js');
+  const { buildVaultIndex, saveVaultIndex } = await import('../src/indexer.js');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jacob-ai-vault-'));
+  fs.mkdirSync(path.join(root, 'node_modules', 'dependency'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'note.md'), '# note');
+  fs.writeFileSync(path.join(root, 'node_modules', 'dependency', 'README.md'), '# ignored');
+  const envPath = path.join(root, '.env');
+  fs.writeFileSync(envPath, `OBSIDIAN_VAULT_PATH=${root}\n`);
+  assert.equal(resolveVaultRoot(null, loadLocalEnv(envPath)), root);
+  const index = buildVaultIndex(root);
+  assert.equal(index.fileCount, 1);
+  assert.equal(index.files[0].path, 'note.md');
+  const output = saveVaultIndex(index, path.join(root, '.runtime', 'index.json'));
+  assert.equal(fs.existsSync(output), true);
+  fs.rmSync(root, { recursive: true, force: true });
+});
+
+test('provider inspection never exposes credentials and reports missing setup', async () => {
+  const { inspectProvider } = await import('../src/provider.js');
+  const dryRun = inspectProvider({ AI_PROVIDER: 'dry-run' });
+  assert.equal(dryRun.ready, true);
+  const missing = inspectProvider({ AI_PROVIDER: 'openai' });
+  assert.equal(missing.ready, false);
+  assert.deepEqual(missing.missing, ['OPENAI_API_KEY']);
+  const unsupported = inspectProvider({ AI_PROVIDER: 'unknown-provider' });
+  assert.equal(unsupported.ready, false);
+  assert.equal(JSON.stringify(unsupported).includes('sk-'), false);
+});
+
 test('usage accounting measures cost per accepted result', async () => {
   const { makeUsageEvent, summarizeUsage } = await import('../src/usage.js');
   const events = [
