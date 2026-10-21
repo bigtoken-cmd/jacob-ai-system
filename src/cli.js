@@ -6,6 +6,7 @@ import { buildVaultIndex, saveVaultIndex } from './indexer.js';
 import { inspectProvider } from './provider.js';
 import { loadRecipeRegistry, prepareExecution } from './orchestrator.js';
 import { runDryPlan } from './dry-run.js';
+import { runConfiguredPlan } from './live-run.js';
 
 const command = process.argv[2];
 
@@ -78,9 +79,23 @@ if (command === 'doctor') {
   const indexPath = path.resolve('.runtime', 'vault-index.json');
   const vault = root ? { configured: true, exists: fs.existsSync(root), root, indexExists: fs.existsSync(indexPath) } : { configured: false, exists: false, root: null, indexExists: false };
   const provider = inspectProvider();
-  console.log(JSON.stringify({ vault, provider, next: provider.ready ? 'ready-for-dry-run' : 'configure-provider' }, null, 2));
-  process.exit(vault.configured && vault.exists && provider.ready ? 0 : 1);
+  const ready = vault.configured && vault.exists && provider.ready;
+  console.log(JSON.stringify({ vault, provider, next: ready ? 'provider-configured-not-tested' : 'configure-missing-setup' }, null, 2));
+  process.exit(ready ? 0 : 1);
 }
 
-console.log('Commands: validate, plan <task-json> [markdown-root], dry-run <task-json> [markdown-root], search [markdown-root] <query>, index [markdown-root], doctor');
+if (command === 'run') {
+  const taskPath = process.argv[3];
+  const vaultRoot = resolveVaultRoot(process.argv[4]);
+  if (!taskPath) {
+    console.error('Usage: node src/cli.js run <task-json> [markdown-vault-root]');
+    process.exit(1);
+  }
+  const task = JSON.parse(fs.readFileSync(path.resolve(taskPath), 'utf8'));
+  const result = await runConfiguredPlan(task, { vaultRoot, registryPath: path.resolve('recipes/registry.json') });
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(result.steps.every(step => step.check.passed) ? 0 : 1);
+}
+
+console.log('Commands: validate, plan <task-json> [markdown-root], dry-run <task-json> [markdown-root], run <task-json> [markdown-root], search [markdown-root] <query>, index [markdown-root], doctor');
 process.exit(command ? 1 : 0);

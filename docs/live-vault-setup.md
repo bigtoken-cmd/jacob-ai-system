@@ -30,4 +30,10 @@ node src/cli.js dry-run fixtures/task.example.json
 
 The index stores paths, sizes, modification times, and hashes. It does not copy note contents into the repository. Generated folders such as `.obsidian`, `.git`, `node_modules`, build output, and caches are excluded.
 
-A real model provider is optional until the dry-run and retrieval behavior are accepted.
+A real model provider is optional until the dry-run and retrieval behavior are accepted. Once `doctor` reports `provider-configured-not-tested`, a model-backed run is available with:
+
+```bash
+node src/cli.js run fixtures/task.example.json
+```
+
+This command sends task context to the configured provider and may incur provider charges. Keep it manual and approval-gated; never make it the default Conductor script.

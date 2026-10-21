@@ -185,6 +185,17 @@ test('local vault config resolves an ignored path and index records only eligibl
   fs.rmSync(root, { recursive: true, force: true });
 });
 
+test('OpenAI provider configuration stays provider-neutral until an explicit run', async () => {
+  const { createConfiguredProvider } = await import('../src/provider.js');
+  const { buildOpenAIPrompt } = await import('../src/openai-provider.js');
+  const provider = createConfiguredProvider({ AI_PROVIDER: 'openai', OPENAI_API_KEY: 'test-key', OPENAI_MODEL: 'gpt-test' });
+  assert.equal(provider.name, 'openai');
+  assert.equal(provider.model, 'gpt-test');
+  const prompt = buildOpenAIPrompt({ task: { request: 'test' }, step: { objective: 'verify' }, context: [{ path: 'note.md', snippet: 'evidence' }] });
+  assert.equal(prompt.includes('test-key'), false);
+  assert.equal(prompt.includes('note.md'), true);
+});
+
 test('provider inspection never exposes credentials and reports missing setup', async () => {
   const { inspectProvider } = await import('../src/provider.js');
   const dryRun = inspectProvider({ AI_PROVIDER: 'dry-run' });
