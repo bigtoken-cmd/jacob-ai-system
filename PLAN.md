@@ -34,8 +34,10 @@ This plan builds a reusable task-processing engine. PARASYTE, school, and websit
 - Deduplicate tasks and records.
 - Retrieve bounded Markdown context.
 - Estimate tokens and enforce budgets.
+- Preserve source hashes, claim status, freshness, contradictions, and review state.
+- Apply vault changes through one inspected, recoverable writer transaction.
 
-**Gate:** the core can plan and validate a task without a model.
+**Gate:** the core can plan and validate a task without a model and refuses stale writes.
 
 ## Phase 4: Dynamic planning
 

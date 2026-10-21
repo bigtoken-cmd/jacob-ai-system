@@ -147,3 +147,20 @@ test('the same universal schema accepts unrelated task domains', () => {
     assert.equal(prepared.plan.contextPolicy.allowFullVault, false, filename);
   }
 });
+
+test('transaction planning refuses stale writes and applies one recoverable operation', async () => {
+  const { applyOperation, inspectOperation, planOperation } = await import('../src/transaction.js');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jacob-ai-transaction-'));
+  fs.writeFileSync(path.join(root, 'note.md'), 'original');
+  const operation = planOperation(root, [{ target: 'note.md', content: 'updated' }]);
+  assert.equal(inspectOperation(root, operation).ok, true);
+  fs.writeFileSync(path.join(root, 'note.md'), 'changed by someone else');
+  const conflict = applyOperation(root, operation);
+  assert.equal(conflict.operation.status, 'conflict');
+  assert.equal(fs.readFileSync(path.join(root, 'note.md'), 'utf8'), 'changed by someone else');
+  const retry = planOperation(root, [{ target: 'note.md', content: 'updated safely' }]);
+  const applied = applyOperation(root, retry);
+  assert.equal(applied.operation.status, 'applied');
+  assert.equal(fs.readFileSync(path.join(root, 'note.md'), 'utf8'), 'updated safely');
+  fs.rmSync(root, { recursive: true, force: true });
+});

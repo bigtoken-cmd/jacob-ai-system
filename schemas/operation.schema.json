@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation.schema.json",
+  "title": "Recoverable Vault Operation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["operationId", "status", "writes", "createdAt"],
+  "properties": {
+    "operationId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["planned", "inspected", "applied", "conflict", "failed", "recovered"] },
+    "writes": { "type": "array", "items": { "$ref": "#/$defs/write" } },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "appliedAt": { "type": ["string", "null"] },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "write": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "content", "expectedHash"],
+      "properties": {
+        "target": { "type": "string", "minLength": 1 },
+        "content": { "type": "string" },
+        "expectedHash": { "type": ["string", "null"] },
+        "resultHash": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

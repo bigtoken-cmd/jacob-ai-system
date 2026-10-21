@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "source.schema.json",
-  "title": "Source Record",
+  "title": "Provenance-Aware Source Record",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "kind", "location", "observedAt", "reliability"],
+  "required": ["id", "kind", "location", "observedAt", "reliability", "freshness"],
   "properties": {
     "id": { "type": "string", "pattern": "^SRC-[0-9]+$" },
     "kind": { "enum": ["chat", "file", "webpage", "assignment", "conversation", "memory", "decision", "other"] },
@@ -12,8 +12,13 @@
     "title": { "type": "string" },
     "observedAt": { "type": "string", "format": "date-time" },
     "reliability": { "enum": ["primary", "secondary", "inferred", "unknown"] },
-    "supports": { "type": "array", "items": { "type": "string" } },
     "freshness": { "enum": ["current", "dated", "stale", "unknown"] },
+    "authority": { "type": "string" },
+    "contentHash": { "type": "string" },
+    "supports": { "type": "array", "items": { "type": "string" } },
+    "contradicts": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reviewState": { "enum": ["unreviewed", "reviewed", "approved", "rejected", "needs-update"] },
     "notes": { "type": "string" }
   }
 }

@@ -23,3 +23,11 @@ PARASYTE, school, and website prospect work will test whether the core generaliz
 ## 2026-10-20: Bounded context by default
 
 The system retrieves a small ranked context packet and never injects the full vault by default.
+
+## 2026-10-21: Borrow patterns, not whole frameworks
+
+External projects mentioned in the TikTok research were reviewed for ideas. We adopted provenance ledgers, raw-to-knowledge flow, explicit ingestion, read-only verification, cost visibility, and single-writer transactions without adding a large third-party swarm dependency.
+
+## 2026-10-21: One writer for vault mutations
+
+Parallel workers may return drafts and evidence, but one inspected operation applies changes. A changed target is a conflict, not a silent overwrite.
