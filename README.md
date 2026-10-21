@@ -1,31 +1,32 @@
 # Jacob AI System
 
-A private, multi-domain work system for PARASYTE, school, and Lincoln website prospects.
+A general-purpose AI operating system and process template for turning any request into a bounded, source-grounded, resumable workflow.
+
+## Core loop
+
+Intake -> infer -> clarify only blockers -> retrieve minimal context -> select recipe -> execute -> verify -> deliver -> record -> improve.
 
 ## The split
 
-- **Obsidian** stores readable knowledge, sources, decisions, project state, and human notes.
-- **This repository** stores schemas, deterministic code, agent recipes, tests, and domain rules.
-- **Conductor** provides isolated coding-agent workspaces for building and reviewing this repository.
-- **Aside** remains the browser/action and approval layer when an external website or account is involved.
+- **Obsidian:** readable memory, sources, decisions, project state, and review.
+- **Repository:** universal schemas, deterministic state, retrieval, budgets, recipes, evaluation, and tests.
+- **Conductor:** isolated coding-agent workspaces and code review.
+- **Aside:** browser actions and human approvals.
 
-This repository intentionally starts without autonomous outreach, publishing, purchases, school submissions, or full-vault access.
+PARASYTE, school, and website prospect work are test environments only. The task contract is intentionally not robot-, school-, or sales-specific.
 
-## Current status
-
-Read `STATE.md`. Attempted work is not treated as completed until its checks pass.
-
-## First local check
+## Local checks
 
 ```bash
 node src/cli.js validate
 node --test
+node src/cli.js plan fixtures/task.example.json
 ```
 
 ## Obsidian
 
-Copy `obsidian-starter/` into a selected Obsidian vault only after reviewing the templates. Keep the live vault outside this repository unless you intentionally choose to version it.
+Use the generic templates in `obsidian-starter/90-System/`. Keep the live vault outside this repository unless you intentionally choose to version it.
 
-## Conductor
+## Current status
 
-Open this repository in Conductor. The repository includes `.conductor/settings.toml` with a validation action. Start with one workspace named `foundation-state-and-schemas`.
+Read `STATE.md`. Attempted work is not treated as completed until its checks pass.

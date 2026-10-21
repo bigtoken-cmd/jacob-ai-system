@@ -1,91 +1,96 @@
 # Build Plan
 
-Each phase is complete only when its acceptance test passes and `STATE.md` is updated.
+This plan builds a reusable task-processing engine. PARASYTE, school, and website research are test suites, not the architecture.
 
-## Phase 0: Real task definition
+## Phase 0: Universal requirements
 
-- Define one representative task for PARASYTE, school, and Lincoln prospects.
-- Capture inputs, expected outputs, sources, constraints, approval points, and acceptance tests.
-- Do not build a generic swarm before these tasks are concrete.
+- Define the product promise and non-goals.
+- Define the universal task envelope.
+- Define the meaning of success, failure, promotion, quarantine, and completion.
+- Select representative tasks from several unrelated domains.
 
-**Gate:** three task cards exist and a human can judge success for each.
+**Gate:** a task can be described without domain-specific required fields.
 
 ## Phase 1: Raw source collection
 
-- Collect original ChatGPT exports or supplied conversations.
-- Collect relevant Aside transcripts, project files, examples, corrections, and rejected outputs.
-- Label source dates, ownership, and reliability.
+- Collect original conversations, files, examples, corrections, and rejected outputs.
+- Keep summaries separate from original evidence.
+- Record source dates, provenance, and freshness.
 
-**Gate:** each pilot task has enough raw material for a grounded test.
+**Gate:** a task can reference raw sources without copying the entire history into a prompt.
 
-## Phase 2: Knowledge and repository foundation
+## Phase 2: Knowledge foundation
 
 - Keep the live Obsidian vault separate from the code repository.
-- Create the control documents and starter note structure.
-- Create schemas for tasks, sources, results, evaluations, and project state.
+- Add generic task, evidence, project-state, run, and recipe templates.
+- Add source linking and a bounded inbox.
 
-**Gate:** a fresh agent can understand current work from `PROJECT.md`, `STATE.md`, the task card, and selected sources.
+**Gate:** a new task can be stored and resumed from a short state record.
 
 ## Phase 3: Deterministic core
 
-- Implement task creation, state transitions, validation, deduplication, and resumable run records.
-- Add lightweight Markdown retrieval with bounded results.
-- Add tests before model calls.
+- Validate universal task envelopes.
+- Track state transitions and resumable runs.
+- Deduplicate tasks and records.
+- Retrieve bounded Markdown context.
+- Estimate tokens and enforce budgets.
 
-**Gate:** the core manages a fake task correctly without an AI model.
+**Gate:** the core can plan and validate a task without a model.
 
-## Phase 4: One-agent execution
+## Phase 4: Dynamic planning
 
-- Use one bounded agent recipe.
-- Provide only the current task, relevant sources, constraints, and acceptance criteria.
-- Save result, sources used, uncertainty, and next action.
+- Infer a provisional task type from the request.
+- Generate only the steps needed for that request.
+- Ask only blocking questions.
+- Load optional domain adapters only when relevant.
 
-**Gate:** the one-agent baseline can complete the three pilot tasks with inspectable outputs.
+**Gate:** the same engine can plan research, comparison, coding, drafting, analysis, planning, or an unfamiliar task.
 
-## Phase 5: Independent evaluation
+## Phase 5: One-agent baseline
 
-- Add deterministic checks for required fields, sources, duplicates, and task status.
-- Add a separate reviewer rubric.
-- Track failures by cause.
+- Connect one replaceable model provider.
+- Run a bounded recipe with selected context and structured output.
+- Save sources, uncertainty, budget, result, and next action.
 
-**Gate:** every result is passed, revision-needed, or blocked with a reason.
+**Gate:** one agent can complete representative tasks with inspectable evidence.
 
-## Phase 6: Conductor workflow
+## Phase 6: Independent evaluation
 
-- Use one Conductor workspace for implementation and review on one branch.
-- Use separate workspaces for independent experiments.
-- Run validation and tests through Conductor actions.
-- Review diffs before merging.
+- Add deterministic checks.
+- Add independent review recipes.
+- Add held-out task examples.
+- Classify failures by cause.
 
-**Gate:** the repository can be opened, tested, reviewed, and resumed in a new workspace.
+**Gate:** the system can explain why a result passed, needs revision, or is blocked.
 
-## Phase 7: Domain packs
+## Phase 7: Recipe evolution
 
-- Add PARASYTE, school, and Lincoln-prospect rules as separate packs.
-- Keep shared execution logic separate from domain constraints.
+- Promote repeated winners.
+- Clone only recipe configuration and small controlled mutations.
+- Quarantine repeated failures.
+- Retire recipes only after preserving failure evidence.
 
-**Gate:** a new domain can be added by creating a pack and tests rather than rewriting the core.
+**Gate:** improvement is measured against the previous recipe and does not consume more resources than it saves.
 
-## Phase 8: Controlled recipe improvement
+## Phase 8: Multi-agent execution
 
-- Version prompts and tool permissions.
-- Promote recipes only after repeated success on held-out tasks.
-- Quarantine failed recipes with failure codes.
-- Clone only the winning configuration, not full transcripts.
+- Add multiple agents only where independent perspectives or sequential capabilities improve results.
+- Use bounded fan-out and one verifier.
+- Stop when acceptance criteria pass.
 
-**Gate:** the system can explain why a recipe was promoted, changed, or archived.
+**Gate:** multi-agent runs beat the one-agent baseline on accepted-result cost and quality.
 
-## Phase 9: Real pilots and measurement
+## Phase 9: Domain adapters as tests
 
-- Run at least three real tasks in each domain.
-- Measure accepted-result time, corrections, unsupported claims, token/cost estimates, and human interventions.
-- Compare against the manual baseline.
+- Run the same generic core on Unitree G1, Figure 03, and 1X NEO research.
+- Run one school task and one website-prospect task.
+- Keep adapter instructions optional and isolated.
 
-**Gate:** measured improvement is large enough to justify continuing.
+**Gate:** domain-specific details do not leak into the universal contract.
 
 ## Phase 10: Daily-use release
 
-- Add approval queue, safe external-action boundaries, backups, and recovery instructions.
-- Document how Jacob starts, pauses, reviews, and resumes work.
+- Add safe approvals, backups, recovery, and provider configuration.
+- Measure time to accepted result, correction rate, unsupported claims, token usage, and human interventions.
 
-**Gate:** the system is understandable, recoverable, and useful without requiring a full conversation replay.
+**Gate:** the system is useful, understandable, and recoverable across unrelated tasks.

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task-plan.schema.json",
+  "title": "Dynamic Task Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["planId", "taskId", "steps", "contextPolicy", "budget", "createdAt"],
+  "properties": {
+    "planId": { "type": "string", "minLength": 1 },
+    "taskId": { "type": "string", "minLength": 1 },
+    "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/step" } },
+    "contextPolicy": { "$ref": "#/$defs/contextPolicy" },
+    "budget": { "$ref": "#/$defs/budget" },
+    "escalation": { "type": "object", "additionalProperties": true },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "objective", "capability", "status", "acceptanceCriteria"],
+      "properties": {
+        "id": { "type": "string" },
+        "objective": { "type": "string", "minLength": 1 },
+        "capability": { "type": "string", "minLength": 1 },
+        "dependsOn": { "type": "array", "items": { "type": "string" } },
+        "inputRefs": { "type": "array", "items": { "type": "string" } },
+        "outputContract": { "type": "object", "additionalProperties": true },
+        "acceptanceCriteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "status": { "enum": ["pending", "ready", "running", "passed", "failed", "blocked"] }
+      }
+    },
+    "contextPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxNotes", "maxCharacters", "sourcePriority"],
+      "properties": {
+        "maxNotes": { "type": "integer", "minimum": 1 },
+        "maxCharacters": { "type": "integer", "minimum": 1 },
+        "sourcePriority": { "type": "array", "items": { "type": "string" } },
+        "allowFullVault": { "type": "boolean" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputTokens", "outputTokens", "totalTokens", "maxModelCalls"],
+      "properties": {
+        "inputTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "totalTokens": { "type": "integer", "minimum": 1 },
+        "maxModelCalls": { "type": "integer", "minimum": 1 },
+        "escalateAfterFailure": { "type": "boolean" }
+      }
+    }
+  }
+}

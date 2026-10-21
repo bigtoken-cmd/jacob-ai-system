@@ -2,24 +2,53 @@
 
 ## Product promise
 
-Turn Jacob's intentions and source material into verified, resumable, domain-specific work with less repeated context, less correction, and clear human control.
+Turn any natural-language request into a bounded, source-grounded, resumable workflow that uses the fewest model calls and the smallest relevant context while preserving human control.
 
-## Initial domains
+## What this is
 
-1. **PARASYTE**: research, product direction, robot/platform constraints, design briefs, and manufacturer-facing preparation.
-2. **School**: assignment organization, source-grounded explanation, permitted drafting/study help, and progress planning.
-3. **Lincoln website prospects**: evidence-backed company research and qualified introductions for Lincoln's premium website work. This is separate from Jacob's independent $2,500 website business.
+This is a general-purpose AI operating system and process template. It is not built around PARASYTE, school, website work, robots, or any other single goal.
 
-## System principles
+Those are evaluation environments used to prove that the core can adapt.
 
-- Original sources remain distinct from interpretations.
-- Deterministic code handles state, validation, deduplication, and calculations.
-- AI handles bounded reasoning, synthesis, drafting, and review.
-- Every result has sources, uncertainty, acceptance criteria, and a next action.
-- Consequential external actions require Jacob's approval.
-- The system must be useful with one agent before multiple agents are added.
-- Failed recipes are quarantined with reasons, not silently erased.
-- Token efficiency means lower cost per accepted result, not merely shorter output.
+## Universal task contract
+
+A task carries only universal information:
+
+- Request and intended goal
+- Relevant context references
+- Constraints and rules
+- Optional entities or subjects
+- Desired deliverable
+- Acceptance criteria
+- Unknowns that may block correctness
+- Approval boundaries
+
+Task-specific fields are generated dynamically or supplied by optional adapters. They are never required globally.
+
+## Core loop
+
+1. Intake a request.
+2. Infer the task shape without pretending certainty.
+3. Ask only questions that block a correct result.
+4. Retrieve the smallest useful context packet.
+5. Select or create a bounded recipe.
+6. Execute with a token and tool budget.
+7. Verify against sources, constraints, and acceptance criteria.
+8. Deliver the result, uncertainties, and next action.
+9. Record useful state and evidence.
+10. Promote, mutate, quarantine, or retire recipes based on independent evidence.
+
+## Recipe evolution
+
+A successful recipe means its repeatable process, not its entire conversation, is reusable. A recipe may be promoted after repeated success across held-out tasks. A failed recipe is first quarantined with a failure code so temporary failures are not confused with bad methods.
+
+## Layers
+
+- **Obsidian:** readable memory, raw sources, decisions, project state, and human review.
+- **Repository:** schemas, deterministic engine, retrieval, budgeting, recipes, evaluators, and tests.
+- **Conductor:** isolated coding-agent workspaces and review flow.
+- **Aside:** browser actions, account-connected work, and approval boundaries.
+- **Model providers:** replaceable execution providers, not the source of truth.
 
 ## Explicit non-goals
 
@@ -27,4 +56,5 @@ Turn Jacob's intentions and source material into verified, resumable, domain-spe
 - No foundational-model training.
 - No unrestricted autonomous agent swarm.
 - No automatic outreach, publishing, purchases, payments, or school submissions.
-- No assumption that a subscription includes unlimited background API usage.
+- No full-vault context injection by default.
+- No success decision based only on an agent's self-rating.

@@ -2,27 +2,24 @@
 
 ## 2026-10-20: Separate code, knowledge, and execution
 
-- Obsidian is the readable knowledge layer.
-- The Git repository is the deterministic system and recipe layer.
-- Conductor is the isolated development and review layer.
-- Aside remains the browser/action and approval layer.
-
-Reason: this keeps the vault readable, the code testable, and agent work isolated.
+Obsidian is readable knowledge, the Git repository is deterministic system code, Conductor is isolated development, and Aside is the browser/action and approval layer.
 
 ## 2026-10-20: Start with one agent
 
-A single bounded agent plus deterministic validation must work before agent multiplication is allowed.
-
-Reason: multiple agents can increase cost, duplication, and debugging difficulty without proving usefulness.
+A one-agent baseline must work before multi-agent execution is allowed.
 
 ## 2026-10-20: Quarantine failures
 
-Failed recipes are archived with failure reasons before deletion is considered.
+Failed recipes are preserved with failure codes before retirement is considered.
 
-Reason: temporary tool failure, missing context, and bad task definitions are different from a bad recipe.
+## 2026-10-20: Generic task envelope
 
-## 2026-10-20: Human approval boundaries
+Domain-specific fields are optional task context, not globally required fields. The universal contract contains request, goal, context references, constraints, deliverable, acceptance criteria, unknowns, and approval boundaries.
 
-No autonomous outreach, publishing, purchases, payments, school submissions, or irreversible external actions.
+## 2026-10-20: Domain work is evaluation, not architecture
 
-Reason: these actions have real consequences and require Jacob's judgment.
+PARASYTE, school, and website prospect work will test whether the core generalizes. The core must not be shaped around those examples.
+
+## 2026-10-20: Bounded context by default
+
+The system retrieves a small ranked context packet and never injects the full vault by default.

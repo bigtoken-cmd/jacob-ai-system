@@ -2,15 +2,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export const TASK_STATUSES = [
-  'queued', 'running', 'awaiting-review', 'blocked', 'failed', 'completed', 'cancelled'
+  'queued', 'planning', 'running', 'awaiting-review', 'blocked', 'failed', 'completed', 'cancelled'
 ];
 
 const TRANSITIONS = {
-  queued: ['running', 'cancelled'],
+  queued: ['planning', 'running', 'cancelled'],
+  planning: ['running', 'blocked', 'failed', 'cancelled'],
   running: ['awaiting-review', 'blocked', 'failed', 'cancelled'],
-  'awaiting-review': ['running', 'completed', 'blocked', 'failed'],
-  blocked: ['queued', 'cancelled'],
-  failed: ['queued', 'cancelled'],
+  'awaiting-review': ['planning', 'running', 'completed', 'blocked', 'failed'],
+  blocked: ['queued', 'planning', 'cancelled'],
+  failed: ['queued', 'planning', 'cancelled'],
   completed: [],
   cancelled: []
 };
@@ -23,15 +24,19 @@ export function makeTask(input) {
   const timestamp = now();
   return {
     id: input.id,
-    domain: input.domain,
-    title: input.title,
-    goal: input.goal,
+    request: input.request ?? input.goal,
+    goal: input.goal ?? input.request,
+    taskType: input.taskType ?? null,
     status: 'queued',
-    inputs: input.inputs ?? [],
+    contextRefs: input.contextRefs ?? input.sourceIds ?? [],
     constraints: input.constraints ?? [],
-    sourceIds: input.sourceIds ?? [],
+    entities: input.entities ?? [],
+    deliverable: input.deliverable ?? { description: 'A verified result with sources and a next action.' },
+    capabilities: input.capabilities ?? [],
     acceptanceCriteria: input.acceptanceCriteria ?? [],
-    approvalRequired: input.approvalRequired ?? true,
+    unknowns: input.unknowns ?? [],
+    approval: input.approval ?? { required: true, actions: [] },
+    custom: input.custom ?? {},
     parentTaskId: input.parentTaskId ?? null,
     createdAt: timestamp,
     updatedAt: timestamp
@@ -41,16 +46,17 @@ export function makeTask(input) {
 export function validateTask(task) {
   const errors = [];
   if (!task || typeof task !== 'object') return ['task must be an object'];
-  for (const field of ['id', 'domain', 'title', 'goal', 'status', 'createdAt', 'updatedAt']) {
+  for (const field of ['id', 'request', 'goal', 'status', 'createdAt', 'updatedAt']) {
     if (typeof task[field] !== 'string' || task[field].length === 0) errors.push(`missing ${field}`);
   }
   if (!/^[A-Z0-9-]+$/.test(task.id ?? '')) errors.push('id must contain uppercase letters, numbers, and hyphens only');
-  if (!['parasyte', 'school', 'lincoln-prospects', 'system'].includes(task.domain)) errors.push('invalid domain');
   if (!TASK_STATUSES.includes(task.status)) errors.push('invalid status');
   if (!Array.isArray(task.acceptanceCriteria) || task.acceptanceCriteria.length === 0) errors.push('acceptanceCriteria must contain at least one item');
-  for (const field of ['inputs', 'constraints', 'sourceIds', 'acceptanceCriteria']) {
+  for (const field of ['contextRefs', 'constraints', 'entities', 'capabilities', 'unknowns']) {
     if (!Array.isArray(task[field])) errors.push(`${field} must be an array`);
   }
+  if (!task.deliverable || typeof task.deliverable.description !== 'string' || task.deliverable.description.length === 0) errors.push('deliverable.description is required');
+  if (task.approval && typeof task.approval.required !== 'boolean') errors.push('approval.required must be boolean');
   return errors;
 }
 
@@ -59,9 +65,7 @@ export function canTransition(from, to) {
 }
 
 export function transitionTask(task, nextStatus) {
-  if (!canTransition(task.status, nextStatus)) {
-    throw new Error(`invalid transition: ${task.status} -> ${nextStatus}`);
-  }
+  if (!canTransition(task.status, nextStatus)) throw new Error(`invalid transition: ${task.status} -> ${nextStatus}`);
   return { ...task, status: nextStatus, updatedAt: now() };
 }
 
@@ -95,7 +99,7 @@ function markdownFiles(root) {
   return found;
 }
 
-export function retrieveMarkdown(root, query, limit = 8) {
+export function retrieveMarkdown(root, query, limit = 8, maxCharacters = 12000) {
   const terms = String(query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
   if (terms.length === 0) return [];
   const results = [];
@@ -107,11 +111,11 @@ export function retrieveMarkdown(root, query, limit = 8) {
     const score = matchedTerms.length / terms.length;
     const firstTerm = matchedTerms[0];
     const position = haystack.indexOf(firstTerm);
-    const start = Math.max(0, position - 100);
-    const snippet = content.replace(/\s+/g, ' ').slice(start, start + 320);
+    const start = Math.max(0, position - 120);
+    const snippet = content.replace(/\s+/g, ' ').slice(start, start + 420);
     results.push({ path: path.relative(root, file), score, matchedTerms, snippet });
   }
-  return results.sort((a, b) => b.score - a.score || a.path.localeCompare(b.path)).slice(0, limit);
+  return results.sort((a, b) => b.score - a.score || a.path.localeCompare(b.path)).slice(0, limit).map(item => ({ ...item, snippet: item.snippet.slice(0, maxCharacters) }));
 }
 
 export function evaluateResult(result, requiredSourceIds = []) {

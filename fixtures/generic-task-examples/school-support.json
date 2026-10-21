@@ -1,0 +1,19 @@
+{
+  "id": "GENERAL-SCHOOL-001",
+  "request": "Explain the assignment and help me study without violating its rules.",
+  "goal": "Create a source-grounded study explanation for the exact assignment.",
+  "taskType": null,
+  "status": "queued",
+  "contextRefs": ["assignment instructions", "rubric"],
+  "constraints": ["Check assignment-specific AI rules first", "Do not submit"],
+  "entities": [{ "label": "current assignment", "type": "work-item" }],
+  "deliverable": { "description": "A concise study explanation and next-step checklist", "format": "markdown" },
+  "capabilities": [],
+  "acceptanceCriteria": ["Exact assignment is verified", "Rules are followed", "Missing information is not guessed"],
+  "unknowns": ["exact assignment rules"],
+  "approval": { "required": true, "actions": ["review before use"] },
+  "custom": {},
+  "parentTaskId": null,
+  "createdAt": "2026-10-20T00:00:00.000Z",
+  "updatedAt": "2026-10-20T00:00:00.000Z"
+}

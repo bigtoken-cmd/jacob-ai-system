@@ -1,0 +1,23 @@
+{
+  "id": "ROBOT-COMPARISON-001",
+  "request": "Research Unitree G1, Figure 03, and 1X NEO and compare the facts relevant to a product decision.",
+  "goal": "Produce a source-backed comparison without treating assumptions as specifications.",
+  "taskType": null,
+  "status": "queued",
+  "contextRefs": ["official manufacturer pages"],
+  "constraints": ["Prefer primary sources", "Mark unavailable information as unknown"],
+  "entities": [
+    { "label": "Unitree G1", "type": "subject" },
+    { "label": "Figure 03", "type": "subject" },
+    { "label": "1X NEO", "type": "subject" }
+  ],
+  "deliverable": { "description": "A source-backed comparison brief", "format": "markdown table plus notes" },
+  "capabilities": [],
+  "acceptanceCriteria": ["Each important fact has a source", "Differences are explicit", "Unknowns remain visible"],
+  "unknowns": [],
+  "approval": { "required": true, "actions": ["approve product-use interpretation"] },
+  "custom": {},
+  "parentTaskId": null,
+  "createdAt": "2026-10-20T00:00:00.000Z",
+  "updatedAt": "2026-10-20T00:00:00.000Z"
+}

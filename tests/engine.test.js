@@ -4,28 +4,33 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { canTransition, evaluateResult, makeTask, retrieveMarkdown, transitionTask, validateResult, validateTask } from '../src/engine.js';
+import { JsonStore } from '../src/store.js';
+import { quarantineRecipe, cloneRecipe, recordRecipeOutcome } from '../src/recipes.js';
+import { allocateBudget, compactText, estimateTokens } from '../src/token-budget.js';
+import { buildSearchQuery, createDynamicPlan, inferTaskType } from '../src/task-planner.js';
+import { prepareExecution } from '../src/orchestrator.js';
 
 const taskInput = {
   id: 'TEST-001',
-  domain: 'system',
-  title: 'Test task',
-  goal: 'Test deterministic state.',
+  request: 'Compare two options using verified sources.',
+  goal: 'Test the universal task contract.',
   acceptanceCriteria: ['It validates']
 };
 
-test('makeTask creates a queued task with explicit approval', () => {
+test('makeTask creates a generic queued task without a domain', () => {
   const task = makeTask(taskInput);
   assert.equal(task.status, 'queued');
-  assert.equal(task.approvalRequired, true);
+  assert.equal(task.taskType, null);
+  assert.equal(task.approval.required, true);
   assert.deepEqual(validateTask(task), []);
 });
 
-test('state transitions reject unsafe jumps', () => {
-  assert.equal(canTransition('queued', 'running'), true);
+test('state transitions support planning and reject unsafe jumps', () => {
+  assert.equal(canTransition('queued', 'planning'), true);
   assert.equal(canTransition('queued', 'completed'), false);
-  const running = transitionTask(makeTask(taskInput), 'running');
-  assert.equal(running.status, 'running');
-  assert.throws(() => transitionTask(running, 'completed'), /invalid transition/);
+  const planning = transitionTask(makeTask(taskInput), 'planning');
+  assert.equal(planning.status, 'planning');
+  assert.throws(() => transitionTask(planning, 'completed'), /invalid transition/);
 });
 
 test('result evaluation requires sources and uncertainty field', () => {
@@ -54,9 +59,6 @@ test('Markdown retrieval returns bounded ranked matches', () => {
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-import { JsonStore } from '../src/store.js';
-import { cloneRecipe, quarantineRecipe, recordRecipeOutcome } from '../src/recipes.js';
-
 test('JsonStore writes atomic run records and resumes them', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jacob-ai-store-'));
   const store = new JsonStore(root);
@@ -78,4 +80,70 @@ test('recipe promotion requires repeated success and failed recipes are quaranti
   assert.equal(child.parentRecipeId, recipe.recipeId);
   assert.equal(child.status, 'experimental');
   assert.equal(quarantineRecipe(child, 'unsupported-claim').status, 'quarantined');
+});
+
+test('token controls estimate and compact context', () => {
+  assert.equal(estimateTokens('12345678'), 2);
+  assert.equal(compactText('a '.repeat(100), 20).endsWith('[truncated]'), true);
+  const budget = allocateBudget({ contextCharacters: 4000, taskCharacters: 200 });
+  assert.equal(budget.totalTokens, budget.inputTokens + budget.outputTokens);
+  assert.equal(budget.maxModelCalls, 3);
+});
+
+test('dynamic planning adapts to any request type', () => {
+  assert.equal(inferTaskType('Compare Unitree G1 and Figure 03'), 'comparison');
+  assert.equal(inferTaskType('Find official sources about a company'), 'research');
+  const task = makeTask({
+    ...taskInput,
+    id: 'PLAN-001',
+    request: 'Research and compare three subjects.',
+    goal: 'Create a source-backed comparison.',
+    entities: [{ label: 'Unitree G1', type: 'subject' }, { label: 'Figure 03', type: 'subject' }],
+    unknowns: ['approved output use']
+  });
+  const plan = createDynamicPlan(task, { contextCharacters: 4000 });
+  assert.equal(plan.steps[0].id, 'clarify');
+  assert.equal(plan.steps.at(-1).id, 'deliver');
+  assert.equal(plan.contextPolicy.allowFullVault, false);
+  assert.ok(plan.budget.totalTokens > 0);
+  assert.match(buildSearchQuery(task), /Unitree G1/);
+});
+
+test('execution preparation retrieves limited context and chooses recipes', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jacob-ai-vault-'));
+  fs.writeFileSync(path.join(root, 'robot.md'), '# Unitree G1\nResearch notes for a comparison.');
+  const task = makeTask({ ...taskInput, id: 'EXEC-001', request: 'Research Unitree G1', goal: 'Find verified facts', taskType: null, contextRefs: ['robot.md'] });
+  const prepared = prepareExecution(task, { vaultRoot: root, recipes: [{ recipeId: 'research', status: 'experimental', capabilities: ['gather-evidence'], tokenBudget: 100 }] });
+  assert.equal(prepared.task.taskType, 'research');
+  assert.equal(prepared.context.length, 1);
+  assert.equal(prepared.candidateRecipes[0].recipeId, 'research');
+  assert.equal(prepared.plan.contextPolicy.allowFullVault, false);
+  fs.rmSync(root, { recursive: true, force: true });
+});
+
+test('dry-run execution works without a model provider', async () => {
+  const { runDryPlan } = await import('../src/dry-run.js');
+  const task = makeTask({
+    ...taskInput,
+    id: 'DRY-001',
+    request: 'Research any subject using available sources.',
+    goal: 'Produce a source-backed research result.',
+    taskType: 'research'
+  });
+  const result = await runDryPlan(task);
+  assert.equal(result.task.taskType, 'research');
+  assert.equal(result.steps.length, 4);
+  assert.equal(result.steps.every(step => step.check.passed), true);
+  assert.equal(result.steps[0].response.provider, 'dry-run');
+});
+
+test('the same universal schema accepts unrelated task domains', () => {
+  const examples = ['robot-comparison.json', 'school-support.json', 'company-research.json'];
+  for (const filename of examples) {
+    const task = JSON.parse(fs.readFileSync(path.join('fixtures/generic-task-examples', filename), 'utf8'));
+    assert.deepEqual(validateTask(task), [], filename);
+    const prepared = prepareExecution(task, { recipes: [] });
+    assert.ok(prepared.plan.steps.length >= 4, filename);
+    assert.equal(prepared.plan.contextPolicy.allowFullVault, false, filename);
+  }
 });

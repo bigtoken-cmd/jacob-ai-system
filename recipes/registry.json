@@ -6,6 +6,8 @@
       "parentRecipeId": null,
       "role": "Collect only task-relevant evidence and return source-linked notes.",
       "status": "experimental",
+      "capabilities": ["gather-evidence", "retrieve-context"],
+      "allowedTools": ["read-source"],
       "tokenBudget": 3000,
       "successCount": 0,
       "failureCodes": [],
@@ -18,11 +20,27 @@
       "parentRecipeId": null,
       "role": "Check a result against sources, required fields, and task-specific acceptance criteria.",
       "status": "experimental",
+      "capabilities": ["verify-result", "analyze-evidence"],
+      "allowedTools": ["read-source", "read-result"],
       "tokenBudget": 2200,
       "successCount": 0,
       "failureCodes": [],
       "scoreHistory": [],
       "acceptanceTests": ["Missing evidence is named", "Pass or revision-needed decision is justified"]
+    },
+    {
+      "recipeId": "bounded-producer",
+      "version": 1,
+      "parentRecipeId": null,
+      "role": "Produce the requested deliverable from verified context without inventing missing facts.",
+      "status": "experimental",
+      "capabilities": ["solve-task", "produce-draft", "deliver-result"],
+      "allowedTools": ["read-context", "write-draft"],
+      "tokenBudget": 2600,
+      "successCount": 0,
+      "failureCodes": [],
+      "scoreHistory": [],
+      "acceptanceTests": ["Required deliverable format is followed", "Unknowns remain visible", "The next action is concrete"]
     }
   ]
 }

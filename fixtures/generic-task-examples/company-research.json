@@ -1,0 +1,19 @@
+{
+  "id": "GENERAL-COMPANY-001",
+  "request": "Find and qualify a company that may be a good website introduction.",
+  "goal": "Prepare an evidence-backed handoff without claiming interest or budget.",
+  "taskType": null,
+  "status": "queued",
+  "contextRefs": ["official company website"],
+  "constraints": ["Use current public evidence", "Do not contact the company automatically"],
+  "entities": [{ "label": "target company", "type": "organization" }],
+  "deliverable": { "description": "A qualified company brief", "format": "markdown handoff" },
+  "capabilities": [],
+  "acceptanceCriteria": ["Official site is recorded", "Observed problems are separated from assumptions", "Next human action is clear"],
+  "unknowns": ["company selection", "qualification criteria"],
+  "approval": { "required": true, "actions": ["approve handoff", "approve any outreach"] },
+  "custom": {},
+  "parentTaskId": null,
+  "createdAt": "2026-10-20T00:00:00.000Z",
+  "updatedAt": "2026-10-20T00:00:00.000Z"
+}

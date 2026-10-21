@@ -13,5 +13,13 @@ icon = "check"
 command = "node --test"
 icon = "test"
 
+[scripts.run.plan]
+command = "node src/cli.js plan fixtures/task.example.json"
+icon = "list"
+
+[scripts.run.dry_run]
+command = "node src/cli.js dry-run fixtures/task.example.json"
+icon = "play"
+
 [scripts.archive]
 command = "node src/cli.js validate"
