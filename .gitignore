@@ -5,6 +5,7 @@ node_modules/
 !.env.example
 .conductor/settings.local.toml
 runtime/
+.runtime/
 private/
 obsidian-live/
 obsidian-starter/.obsidian/
