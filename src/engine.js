@@ -84,12 +84,14 @@ export function validateResult(result) {
   return errors;
 }
 
+const SKIP_DIRECTORIES = new Set(['.obsidian', '.git', 'node_modules', 'dist', 'build', 'coverage', '.next', '.cache', 'vendor']);
+
 function markdownFiles(root) {
   const found = [];
   if (!fs.existsSync(root)) return found;
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name === '.obsidian' || entry.name.startsWith('.')) continue;
+      if (SKIP_DIRECTORIES.has(entry.name) || entry.name.startsWith('.')) continue;
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(full);
       else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) found.push(full);

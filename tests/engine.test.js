@@ -51,8 +51,10 @@ test('result evaluation requires sources and uncertainty field', () => {
 test('Markdown retrieval returns bounded ranked matches', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jacob-ai-system-'));
   fs.mkdirSync(path.join(root, 'nested'));
+  fs.mkdirSync(path.join(root, 'node_modules', 'package'), { recursive: true });
   fs.writeFileSync(path.join(root, 'parasyte.md'), '# PARASYTE\nUnitree design tech pack.');
   fs.writeFileSync(path.join(root, 'nested', 'school.md'), '# School\nPhysics assignment plan.');
+  fs.writeFileSync(path.join(root, 'node_modules', 'package', 'README.md'), '# PARASYTE fake dependency match.');
   const results = retrieveMarkdown(root, 'PARASYTE tech pack');
   assert.equal(results.length, 1);
   assert.equal(results[0].path, 'parasyte.md');
