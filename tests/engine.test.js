@@ -164,3 +164,16 @@ test('transaction planning refuses stale writes and applies one recoverable oper
   assert.equal(fs.readFileSync(path.join(root, 'note.md'), 'utf8'), 'updated safely');
   fs.rmSync(root, { recursive: true, force: true });
 });
+
+test('usage accounting measures cost per accepted result', async () => {
+  const { makeUsageEvent, summarizeUsage } = await import('../src/usage.js');
+  const events = [
+    makeUsageEvent({ taskId: 'USAGE-001', provider: 'dry-run', inputTokens: 100, outputTokens: 20, estimatedCost: 0.01, accepted: true }),
+    makeUsageEvent({ taskId: 'USAGE-002', provider: 'dry-run', inputTokens: 200, outputTokens: 30, estimatedCost: 0.02, accepted: false, failureCode: 'unsupported-claim' })
+  ];
+  const summary = summarizeUsage(events);
+  assert.equal(summary.totalTokens, 350);
+  assert.equal(summary.acceptedResults, 1);
+  assert.equal(summary.costPerAcceptedResult, 0.03);
+  assert.equal(summary.tokensPerAcceptedResult, 350);
+});

@@ -11,6 +11,7 @@ Phase 4: Dynamic planning
 - Generic task planning can infer provisional task types and generate clarify, retrieve, execute, verify, and deliver steps.
 - Bounded Markdown retrieval, token estimation, context limits, JSON run persistence, and recipe promotion/quarantine are implemented.
 - Provenance-aware source fields and a single-writer transaction layer now preserve hashes, detect stale writes, and apply recoverable changes atomically.
+- Usage events now measure calls, input/output tokens, estimated cost, accepted results, and cost per accepted result.
 - Generic raw, knowledge, outputs, and operations vault folders and templates are included.
 - PARASYTE, school, and Lincoln prospect cards exist as evaluation fixtures rather than universal requirements.
 - `node src/cli.js validate` passes.
@@ -25,6 +26,7 @@ Phase 4: Dynamic planning
 - Recipe quality has not been measured on held-out real tasks.
 - Multi-agent execution has not been enabled.
 - No third-party swarm or second-brain repository has been installed; useful patterns were implemented selectively in our own code.
+- External pattern review is documented in `docs/external-patterns.md`.
 
 ## Current blockers
 
